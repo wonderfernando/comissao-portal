@@ -151,6 +151,7 @@ export async function getAllDocumentsAction(): Promise<DocumentsListResponse> {
                     nome_solicitante: nome,
                     bi_solicitante: bi,
                     data_emissao: doc.created_at || doc.dados?.data_emissao,
+                    hora_emissao: doc.created_at?.split("T")[1]?.split(".")[0] || doc.dados?.hora_emissao.split("T")[1]?.split(".")[0],
                     status: 'emitido',
                     originalData: doc
                 });
@@ -191,9 +192,9 @@ export async function getDeclaracoesMoradorAction(): Promise<DocumentsListRespon
         }
 
         const result = await response.json();
-        console.log(result)
+        console.log("diretamente ",result)
         // Access dados.emitir_documento from the response
-        const rawDocs: EmitirDocumento[] = result.dados?.emitir_documento || [];
+        const rawDocs: EmitirDocumento[] = result.dados?.[0]?.emitir_documento || [];
 
         const documents: DocumentRecord[] = rawDocs.map((doc) => ({
             id: doc.id,
@@ -201,6 +202,7 @@ export async function getDeclaracoesMoradorAction(): Promise<DocumentsListRespon
             nome_solicitante: doc.dados.nome_completo,
             bi_solicitante: doc.dados.numero_bi,
             data_emissao: doc.created_at,
+            hora_emissao: doc.created_at.split("T")[1].split(".")[0],
             status: 'emitido',
             originalData: doc
         }));
@@ -240,13 +242,14 @@ export async function getDeclaracoesMoradorMenorAction(): Promise<DocumentsListR
 
         const result = await response.json();
         // Access dados.emitir_documento from the response
-        const rawDocs: EmitirDocumento[] = result.dados?.emitir_documento || [];
+        const rawDocs: EmitirDocumento[] = result.dados?.[0]?.emitir_documento || [];
 
         const documents: DocumentRecord[] = rawDocs.map((doc) => ({
             id: doc.id,
-            tipo: 'declaracao-morador',
+            tipo: 'declaracao-morador-menor',
             nome_solicitante: doc.dados.nome_completo,
             bi_solicitante: doc.dados.numero_bi,
+            hora_emissao: doc.created_at.split("T")[1].split(".")[0],
             data_emissao: doc.created_at,
             status: 'emitido',
             originalData: doc
@@ -286,7 +289,7 @@ export async function getOcorrenciasObitoAction(): Promise<DocumentsListResponse
         }
 
         const result = await response.json();
-        const rawDocs: EmitirDocumento[] = result.dados?.emitir_documento || [];
+        const rawDocs: EmitirDocumento[] = result.dados?.[0]?.emitir_documento || [];
 
         const documents: DocumentRecord[] = rawDocs.map((doc) => ({
             id: doc.id,
@@ -294,6 +297,7 @@ export async function getOcorrenciasObitoAction(): Promise<DocumentsListResponse
             nome_solicitante: doc.dados.nome_completo || "Desconhecido",
             bi_solicitante: doc.dados.numero_bi || "N/A",
             data_emissao: doc.created_at,
+            hora_emissao: doc.created_at.split("T")[1].split(".")[0],
             status: 'emitido',
             originalData: doc
         }));
@@ -332,7 +336,7 @@ export async function getDeclaracaoOcorrenciaAction(): Promise<DocumentsListResp
         }
 
         const result = await response.json();
-        const rawDocs: EmitirDocumento[] = result.dados?.emitir_documento || [];
+        const rawDocs: EmitirDocumento[] = result.dados?.[0]?.emitir_documento || [];
 
         const documents: DocumentRecord[] = rawDocs.map((doc) => ({
             id: doc.id,
@@ -340,6 +344,7 @@ export async function getDeclaracaoOcorrenciaAction(): Promise<DocumentsListResp
             nome_solicitante: doc.dados.nome_completo || doc.dados.nome_declarante || "Desconhecido",
             bi_solicitante: doc.dados.numero_bi || doc.dados.bi_declarante || "N/A",
             data_emissao: doc.created_at,
+            hora_emissao: doc.created_at.split("T")[1].split(".")[0],
             status: 'emitido',
             originalData: doc
         }));

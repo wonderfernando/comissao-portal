@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react";
-import { FileText, Baby, Skull, AlertCircle, Printer, Eye, Calendar, User } from "lucide-react";
+import { FileText, Baby, Skull, AlertCircle, Printer, Eye, Calendar, User, Clock } from "lucide-react";
 import {
     Table,
     TableBody,
@@ -44,6 +44,7 @@ const documentTypeColors: Record<DocumentType, string> = {
 
 export function DocumentsTable({ documents }: Props) {
     const [printingId, setPrintingId] = useState<number | null>(null);
+console.log(documents)
 
     const handlePrint = async (doc: DocumentRecord) => {
         setPrintingId(doc.id);
@@ -152,6 +153,7 @@ export function DocumentsTable({ documents }: Props) {
                                 <TableHead>Declarante</TableHead>
                                 <TableHead className="w-[140px]">BI</TableHead>
                                 <TableHead className="w-[120px]">Data de Emissão</TableHead>
+                                <TableHead className="w-[120px]">Hora de Emissão</TableHead>
                                 <TableHead className="w-[100px] text-right">Ações</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -185,6 +187,12 @@ export function DocumentsTable({ documents }: Props) {
                                             <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                                 <Calendar className="w-3.5 h-3.5" />
                                                 {formatDate(doc.data_emissao)}
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>
+                                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                                <Clock className="w-3.5 h-3.5" />
+                                                {doc.hora_emissao}
                                             </div>
                                         </TableCell>
                                         <TableCell className="text-right">

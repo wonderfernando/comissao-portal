@@ -68,12 +68,14 @@ export interface DocumentRecord {
     nome_solicitante: string;
     bi_solicitante: string;
     data_emissao: string;
+    hora_emissao: string;
     status?: string;
     originalData?: any;
 }
 
 export interface DocumentsListResponse {
     success: boolean;
+    mensagem?: string
     documents: DocumentRecord[];
 }
 
