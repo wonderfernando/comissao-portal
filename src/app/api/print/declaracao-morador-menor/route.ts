@@ -93,7 +93,7 @@ export async function POST(req: NextRequest) {
 
         // Generate QR Code
         // In a real scenario, this URL would point to a verification page
-        const qrDataURL = await QRCode.toDataURL(hash_qr || `https://teusite.gov/validar/${cidadao.numero_bi}`);
+        const qrDataURL = await QRCode.toDataURL(`${process.env.NEXT_PUBLIC_APP}/check/${hash_qr}` || `https://teusite.gov/validar/${cidadao.numero_bi}`);
 
         // Font path
         const FONT_PATH = path.join(process.cwd(), "public", "font.ttf");
