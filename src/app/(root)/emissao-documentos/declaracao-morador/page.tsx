@@ -6,7 +6,7 @@ import { Loader } from "../../components/loader";
 import { DeclaracaoMoradorForm } from "../components/declaracao-morador-form";
 
 export default async function page() {
-    const declaracoes = [] 
+    
     return (
 
         <div className="w-full">
@@ -23,9 +23,7 @@ export default async function page() {
                         <p className="text-sm text-muted-foreground">
                             Documento que comprova residência no bairro
                         </p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                            Total de documentos: <span className="font-semibold">{declaracoes.length}</span>
-                        </p>
+                     
                     </div>
                 </div>
                 <DeclaracaoMoradorForm/>

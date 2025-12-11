@@ -191,6 +191,7 @@ export async function getDeclaracoesMoradorAction(): Promise<DocumentsListRespon
         }
 
         const result = await response.json();
+        console.log(result)
         // Access dados.emitir_documento from the response
         const rawDocs: EmitirDocumento[] = result.dados?.emitir_documento || [];
 

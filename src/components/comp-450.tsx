@@ -10,11 +10,12 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { usePathname } from "next/navigation"
+import { items_ } from "@/app/(root)/components/sidebar"
 
 export default function BreadcrumbComp() {
   const pathname = usePathname()
   const list = pathname.split("/").filter((path) => path !== "" && isNaN(Number(path)))
- 
+  
   return (
     <Breadcrumb>
       <BreadcrumbList>
@@ -28,13 +29,13 @@ export default function BreadcrumbComp() {
           list?.map((path, index) => {
             const isLast = index === list.length - 1
             const href = `/${list.slice(0, index + 1).join("/")}`
-            const label = path.charAt(0).toUpperCase() + path.slice(1).replace(/-/g, " ")
+            const title = items_.find((item) => item.url === href)?.title
             return (
               <BreadcrumbItem key={href}>
                 {isLast ? (
-                  <BreadcrumbLink href="#">{label}</BreadcrumbLink>
+                  <BreadcrumbLink href="#">{title}</BreadcrumbLink>
                 ) : (
-                  <BreadcrumbLink href={href}>{label}</BreadcrumbLink>
+                  <BreadcrumbLink href={href}>{title}</BreadcrumbLink>
                 )}
                 {!isLast && <BreadcrumbSeparator> / </BreadcrumbSeparator>}
               </BreadcrumbItem>

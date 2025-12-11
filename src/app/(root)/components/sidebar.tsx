@@ -21,7 +21,7 @@ import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible"
 import { CollapsibleTrigger } from "@radix-ui/react-collapsible"
 
 // Menu items.
-const items_ = [
+export const items_ = [
 /*   {
     title: "Início",
     url: "/",
@@ -41,14 +41,13 @@ const items_ = [
 ]
  
 export async function AppSidebar() {
-  const user = await getCurrentUser();
-     return (
+      return (
     <Sidebar variant="floating" className="w-2xs text-muted-foreground">
       <SidebarHeader>
         <SidebarMenuButton size="lg" className="text-[16px] font-bold" asChild>
           <a href="#" className="flex items-center gap-2">
             <img src="/comissao.png" width={40} height={40} alt="Logo" className="rounded-md inline-block mr-2" />
-            <span>+SGCM</span>
+            <span>Poder Local</span>
           </a>
         </SidebarMenuButton>
       </SidebarHeader>

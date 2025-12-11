@@ -70,8 +70,8 @@ const router = useRouter()
     <div className="p-8  flex flex-col justify-center items-center">
         <div className=" flex flex-col align-center max-w-md"> 
           <Image src="/comissao.png" alt="Logo SISOP" width={150} height={150} className="mb-4 mx-auto"/>     
-        <h2 className="text-2xl font-bold mb-2">SICM</h2>
-        <p className="text-gray-600 text-sm">Bem-vindo ao sistema de login da SICM. Por favor, insira suas credenciais para continuar.</p>
+        <h2 className="text-2xl font-bold mb-2">Poder Local</h2>
+        <p className="text-gray-600 text-sm">Bem-vindo ao portal poder local. Por favor, insira suas credenciais para continuar.</p>
         <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">
             <FormField
@@ -101,12 +101,10 @@ const router = useRouter()
                 )}
             />
             <div className="text-sm text-right">
-                <Link href="#" className="text-blue-600 hover:underline">Esqueceu a palavra-passe?</Link>
+                <Link href="#" className="text-blue-600 hover:underline">Esqueceu-se da palavra-passe?</Link>
             </div> 
             <div className="flex flex-col gap-2">
                  <Button type="submit" className="w-full cursor-pointer" disabled={mutation.isPending}>Entrar {mutation.isPending && <Loader2 className="animate-spin" />}</Button>        
-                         <span className="text-center text-muted-foreground">ou</span>
-                 <Button variant="outline" type="button"  className="w-full cursor-pointer">SUPORTE</Button>
             </div> 
         </form>
     </Form>

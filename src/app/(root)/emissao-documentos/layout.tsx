@@ -10,7 +10,7 @@ export interface MenuItem {
 const menu: MenuItem[] = [
     {
         label: "Início",
-        link: "emissao-documentos",
+        link: "/",
         key: 1
     },
     {

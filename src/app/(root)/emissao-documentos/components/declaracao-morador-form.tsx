@@ -53,9 +53,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-interface Props {
-    onSuccess?: () => void;
-}
+ 
 
 export function DeclaracaoMoradorForm() {
     const [open, setOpen] = useState(false);
@@ -90,7 +88,7 @@ export function DeclaracaoMoradorForm() {
                 toast.error(result?.mensagem || "Não foi possivel emitir documento");
                 return;
             }
-
+            console.log(result)
             toast.success("Documento emitido com sucesso");
 
             try {
