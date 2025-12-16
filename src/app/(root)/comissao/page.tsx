@@ -4,6 +4,7 @@ import { ComissaoProfileView } from "./ViewCliente";
 export default async function Page() {
 
   const comissao = await getMyComissao();
+  console.log(comissao)
   if (!comissao.dados?.[0])
     return <></>
     return (

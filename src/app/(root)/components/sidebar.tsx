@@ -46,8 +46,8 @@ export async function AppSidebar() {
       <SidebarHeader>
         <SidebarMenuButton size="lg" className="text-[16px] font-bold" asChild>
           <a href="#" className="flex items-center gap-2">
-            <img src="/comissao.png" width={40} height={40} alt="Logo" className="rounded-md inline-block mr-2" />
-            <span>Poder Local</span>
+            <img src="/logo2.png" width={80} height={80} alt="Logo" className="rounded-md inline-block mr-2" />
+            <span></span>
           </a>
         </SidebarMenuButton>
       </SidebarHeader>

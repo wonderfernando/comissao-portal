@@ -70,8 +70,8 @@ const router = useRouter()
     <div className="p-8  flex flex-col justify-center items-center">
         <div className=" flex flex-col align-center max-w-md"> 
           <Image src="/comissao.png" alt="Logo SISOP" width={150} height={150} className="mb-4 mx-auto"/>     
-        <h2 className="text-2xl font-bold mb-2">Poder Local</h2>
-        <p className="text-gray-600 text-sm">Bem-vindo ao portal poder local. Por favor, insira suas credenciais para continuar.</p>
+        <h2 className="text-2xl font-bold mb-2">Participa</h2>
+        <p className="text-gray-600 text-sm">Bem-vindo ao Portal Participa. Por favor, insira suas credenciais para continuar.</p>
         <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">
             <FormField

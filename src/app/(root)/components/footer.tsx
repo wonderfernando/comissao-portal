@@ -8,7 +8,7 @@ const Footer: React.FC = () => (
         textAlign: 'right',
         borderTop: '1px solid #e0e0e0',
     }}>
-        <span className='font-semibold text-sm text-muted-foreground'>&copy; {new Date().getFullYear()} Poder Local.</span>
+        <span className='font-semibold text-sm text-muted-foreground'>&copy; {new Date().getFullYear()} Participa.</span>
     </footer>
 );
 
