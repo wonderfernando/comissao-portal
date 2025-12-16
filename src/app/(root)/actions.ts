@@ -94,7 +94,7 @@ export async function getAllProjectosAction(): Promise<{
 
 
 export async function getMyComissao(): Promise<{ success: boolean; message: string; dados: Comissao[] | null }> {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/comissao/morador`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/comissao/morador/meu`, {
         headers: {
             ...(await getAuth()),
             "Content-Type": "application/json"

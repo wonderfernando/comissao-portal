@@ -5,11 +5,11 @@ export default async function Page() {
 
   const comissao = await getMyComissao();
   console.log(comissao)
-  if (!comissao.dados?.[0])
+  if (!comissao.dados)
     return <></>
     return (
     <div className="w-full rounded-md">   
-        <ComissaoProfileView comissao={comissao.dados?.[0]}/>
+        <ComissaoProfileView comissao={comissao?.dados?.comissao}/>
     </div>
   )
 }
