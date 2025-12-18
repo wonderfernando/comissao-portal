@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function VerificarDocumentoPage({ params }: PageProps) {
     const { hash } = params;
     const resultado = await verificarDocumentoAction(hash);
-
+console.log(resultado)
     return (
         <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">

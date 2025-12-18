@@ -13,6 +13,7 @@ export interface DocumentoVerificado {
     nacionalidade: string;
     ambito_territorial: string;
     tipo_documento: string;
+    [key: string]: any;
 }
 
 export interface VerificarDocumentoResponse {

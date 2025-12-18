@@ -9,7 +9,7 @@ interface DocumentoVerificadoCardProps {
 }
 
 export default function DocumentoVerificadoCard({ resultado, hash }: DocumentoVerificadoCardProps) {
-   console.log(resultado)
+    console.log(resultado)
     if (!resultado.success) {
         return (
             <div className="bg-white shadow-lg border-l-4 border-red-600">
@@ -107,46 +107,30 @@ export default function DocumentoVerificadoCard({ resultado, hash }: DocumentoVe
             </div>
 
             {/* Document Type */}
-        
+
             {/* Main Content */}
             <div className="px-8 py-6">
-                {/* Dados Pessoais */}
+                {/* Dados do Documento */}
                 <div className="mb-8">
                     <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4 pb-2 border-b-2 border-gray-900">
-                        Dados Pessoais
+                        Detalhes do Documento
                     </h2>
                     <dl className="space-y-0">
-                        <DataField label="Nome Completo" value={dados.nome_completo} />
-                        <DataField label="Número do Documento de indentificacao" value={dados.numero_bi} />
-                        <DataField label="Tipo de documento de indentificação" value={dados.tipo_documento || "N/A"} />
-                        <DataField label="Data de Nascimento" value={formatDate(dados.data_nascimento)} />
-                        <DataField label="Nacionalidade" value={dados.nacionalidade} />
-                        <DataField label="Estado Civil" value={dados.estado_civil} />
-                        <DataField label="Âmbito Territorial" value={dados.ambito_territorial} />
-                    </dl>
-                </div>
+                        {Object.entries(dados).map(([key, value]) => {
+                            // Format the key to be more readable (e.g., "nome_completo" -> "Nome Completo")
+                            const label = key
+                                .replace(/_/g, " ")
+                                .replace(/([A-Z])/g, " $1")
+                                .toLowerCase()
+                                .replace(/\b\w/g, (c) => c.toUpperCase());
 
-                {/* Filiação */}
-           {/*      <div className="mb-8">
-                    <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4 pb-2 border-b-2 border-gray-900">
-                        Filiação
-                    </h2>
-                    <dl className="space-y-0">
-                        <DataField label="Nome do Pai" value={dados.nome_pai} />
-                        <DataField label="Nome da Mãe" value={dados.nome_mae} />
-                    </dl>
-                </div> */}
+                            // Check if value is a date string based on key name or value format
+                            const isDate = key.toLowerCase().includes("data") || key.toLowerCase().includes("emissao") || key.toLowerCase().includes("nascimento");
+                            const displayValue = isDate ? formatDate(String(value)) : String(value);
 
-                {/* Informações do Documento */}
-                <div className="mb-8">
-                    <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4 pb-2 border-b-2 border-gray-900">
-                        Informações do Documento
-                    </h2>
-                  {/*   <dl className="space-y-0">
-                        <DataField label="Data de Emissão" value={formatDate(dados.data_emissao)} />
-                        <DataField label="Local de Emissão" value={dados.local_emissao} />
-                        <DataField label="Emitido Por" value={dados.criado_por} />
-                    </dl> */}
+                            return <DataField key={key} label={label} value={displayValue} />;
+                        })}
+                    </dl>
                 </div>
 
                 {/* Verification Hash */}
