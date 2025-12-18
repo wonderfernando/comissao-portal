@@ -11,7 +11,7 @@ export async function OcorrenciaObitoContentPage() {
         <div className="w-full space-y-6">
             <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-bold tracking-tight">Ocorrências de Óbito</h2>
-                <OcorrenciaObitoForm presidente={userCurrent?.nome}/>
+                <OcorrenciaObitoForm presidente={userCurrent?.nome || "........................"}/>
             </div>
             <DocumentsTable documents={documents.documents} />
         </div>
