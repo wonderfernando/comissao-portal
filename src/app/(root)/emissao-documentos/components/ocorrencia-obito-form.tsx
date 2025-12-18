@@ -34,7 +34,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { saveDocumentAction, printDocumentAction } from "../actions";
+import { saveDocumentAction } from "../actions";
 
 const formSchema = z.object({
     // Deceased Info
@@ -49,10 +49,12 @@ const formSchema = z.object({
     ambito_territorial: z.string().min(1, "Âmbito territorial é obrigatório").default("Bairro"),
     rua: z.string().optional(),
     casa_numero: z.string().optional(),
-
+    emissor: z.string().min(1, "Introduza o orgão emissor do documento"),
     // Death Info
     data_obito: z.string().min(1, "Data do óbito é obrigatória"),
-
+    localidade: z.string().min(1, "Introduza a localidade"),
+    presidente: z.string(),
+    
     // Declarant Info
     nome_declarante: z.string().min(3, "Nome do declarante é obrigatório"),
 
@@ -62,28 +64,29 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export function OcorrenciaObitoForm() {
+export function OcorrenciaObitoForm({presidente}:{presidente: string}) {
     const [open, setOpen] = useState(false);
-    const [isPrinting, setIsPrinting] = useState(false);
-    const [documentId, setDocumentId] = useState<number | null>(null);
-
+ 
     const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
             nome_completo: "",
             numero_bi: "",
-            nacionalidade: "Angolana",
+            nacionalidade: "angolana",
             tipo_documento: "Bilhete de Identidade",
             data_nascimento: "",
             nome_pai: "",
             nome_mae: "",
-            estado_civil: "Solteiro",
+            estado_civil: "solteiro",
             ambito_territorial: "Bairro",
             rua: "",
             casa_numero: "",
             data_obito: "",
             nome_declarante: "",
             tipo_documento_id: 4,
+            emissor: "",
+            localidade: "",
+            presidente:presidente
         },
     });
 
@@ -95,7 +98,7 @@ export function OcorrenciaObitoForm() {
                 toast.error(result?.mensagem || "Não foi possivel emitir documento");
                 return;
             }
-
+            console.log("return ", result)
             toast.success("Documento emitido com sucesso");
 
             try {
@@ -112,22 +115,7 @@ export function OcorrenciaObitoForm() {
                     }
                 };
 
-                // Actually, saveDocumentAction returns { success, dados: { id, emitir_documento: [...], ... } }
-                // We need to fetch the full object again or construct it?
-                // The print route expects { dados: { cidadao, comissao, hash_qr, ... } }
-                // Ideally saveDocumentAction should return the formatted print payload or we use the local API to generate it?
-                // Wait, saveDocumentAction just calls `save`. 
-                // In generic `documents-table`, we use `originalData`. 
-
-                // Let's use the same flow as the generic table: call the local print route with the result.
-                // We need to construct the compatible payload.
-                // The result from saveDocumentAction usually contains the created record.
-
-                // For simplicity, we'll assume the same structure. 
-                // If saveDocumentAction returns the standard API response, we might need to conform it.
-                // But wait, the standard `saveDocumentAction` returns `DadosDTO`.
-                // `DadosDTO` has `emitir_documento`.
-
+ 
                 const response = await fetch('/api/print/ocorrencia-obito', {
                     method: 'POST',
                     headers: {
@@ -176,7 +164,8 @@ export function OcorrenciaObitoForm() {
         setOpen(newOpen);
         if (!newOpen) {
             form.reset();
-            setDocumentId(null);
+           
+            
         }
     }
 
@@ -220,19 +209,7 @@ export function OcorrenciaObitoForm() {
                                         )}
                                     />
 
-                                    <FormField
-                                        control={form.control}
-                                        name="numero_bi"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Número do BI</FormLabel>
-                                                <FormControl>
-                                                    <Input placeholder="000000000XX00" {...field} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
+
 
                                     <FormField
                                         control={form.control}
@@ -303,10 +280,10 @@ export function OcorrenciaObitoForm() {
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
-                                                        <SelectItem value="Solteiro">Solteiro(a)</SelectItem>
-                                                        <SelectItem value="Casado">Casado(a)</SelectItem>
-                                                        <SelectItem value="Divorciado">Divorciado(a)</SelectItem>
-                                                        <SelectItem value="Viúvo">Viúvo(a)</SelectItem>
+                                                        <SelectItem value="solteiro">Solteiro(a)</SelectItem>
+                                                        <SelectItem value="casado">Casado(a)</SelectItem>
+                                                        <SelectItem value="divorciado">Divorciado(a)</SelectItem>
+                                                        <SelectItem value="viúvo">Viúvo(a)</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                                 <FormMessage />
@@ -336,27 +313,42 @@ export function OcorrenciaObitoForm() {
                                             </FormItem>
                                         )}
                                     />
+                                    <FormField
+                                        control={form.control}
+                                        name="numero_bi"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Nº do Documento</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder="000000000XX00" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
 
                                     <FormField
                                         control={form.control}
-                                        name="ambito_territorial"
+                                        name="emissor"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Âmbito Territorial</FormLabel>
-                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                    <FormControl>
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder="Selecione..." />
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        <SelectItem value="rua">Rua</SelectItem>
-                                                        <SelectItem value="predio">Prédio</SelectItem>
-                                                        <SelectItem value="quarteirao">Quarteirão</SelectItem>
-                                                        <SelectItem value="aldeia">Aldeia</SelectItem>
-                                                        <SelectItem value="outro">Outro</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
+                                                <FormLabel>Passado pela</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder="Ex: Conservatória do Registo Civil de Luanda" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                              <FormField
+                                        control={form.control}
+                                        name="localidade"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Localidade</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder="Nome da localidade" {...field} />
+                                                </FormControl>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
@@ -443,7 +435,7 @@ export function OcorrenciaObitoForm() {
                                 <Button
                                     type="submit"
                                     className="flex-1 bg-red-600 hover:bg-red-700 text-white"
-                                    disabled={isSubmitting || isPrinting}
+                                    disabled={isSubmitting}
                                 >
                                     {isSubmitting ? (
                                         <>

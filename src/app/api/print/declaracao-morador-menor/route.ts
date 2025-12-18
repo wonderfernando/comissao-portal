@@ -9,6 +9,7 @@ interface Cidadao {
     nome_completo: string;
     numero_bi: string;
     nacionalidade: string;
+    localidade?: string;
     data_emissao: string;
     tipo_documento: string;
     data_nascimento: string;
@@ -57,33 +58,33 @@ interface RequestBody {
     };
 }
 function getTypeDoc(type: string) {
-       if (type === "bilhete")
-            return "Bilhete de Identidade"
-        if (type === "cartao_eleitor")
-            return "Cartão de Eleitor"
-        if (type === "cartao_residente")
-            return "Cartão de Residente"
-        if (type === "passaporte")
-            return "Passaporte"
+    if (type === "bilhete")
+        return "Bilhete de Identidade"
+    if (type === "cartao_eleitor")
+        return "Cartão de Eleitor"
+    if (type === "cartao_residente")
+        return "Cartão de Residente"
+    if (type === "passaporte")
+        return "Passaporte"
 }
 
 function getAmbito(ambito: string) {
-      if (ambito === "rua")
-            return "Rua"
-        if (ambito === "predio")
-            return "Prédio"
-        if (ambito === "quarteirao")
-            return "Quarteirão"
-        if (ambito === "aldeia")
-            return "Aldeia"
-        if (ambito === "outro")
-            return "Não definido"
+    if (ambito === "rua")
+        return "Rua"
+    if (ambito === "predio")
+        return "Prédio"
+    if (ambito === "quarteirao")
+        return "Quarteirão"
+    if (ambito === "aldeia")
+        return "Aldeia"
+    if (ambito === "outro")
+        return "Não definido"
 }
 export async function POST(req: NextRequest) {
     try {
         const body: RequestBody = await req.json();
         const { cidadao, comissao, hash_qr } = body.dados;
-
+        console.log(cidadao)
         if (!cidadao || !comissao) {
             return new NextResponse(
                 JSON.stringify({ error: "Dados inválidos: Cidadão ou Comissão não encontrados" }),
@@ -130,11 +131,11 @@ export async function POST(req: NextRequest) {
         }
 
         // Insignia/Brasão
-        if (fs.existsSync(insigniaImagePath)) {
-            doc.image(insigniaImagePath, 250, 40, { width: 100 }).moveDown(8);
-        } else {
-            doc.moveDown(8); // Ensure spacing even if image missing
-        }
+        /*  if (fs.existsSync(insigniaImagePath)) {
+             doc.image(insigniaImagePath, 250, 40, { width: 100 }).moveDown(8);
+         } else {
+             doc.moveDown(8); // Ensure spacing even if image missing
+         } */
 
         // Helper to draw checkbox
         const drawCheckbox = (label: string, isChecked: boolean, x: number, y: number) => {
@@ -177,18 +178,18 @@ export async function POST(req: NextRequest) {
             `Certifico que ${cidadao.nome_completo || '...........................................'}, ` +
             `de nacionalidade ${cidadao.nacionalidade || '....................'}, ` +
             `filho de ${cidadao.nome_pai || '.......................................'} e de ${cidadao.nome_mae || '.......................................'}, ` +
-            `nascido aos ${formatDate(cidadao.data_nascimento)}, em Luanda, titular do ${getTypeDoc(cidadao.tipo_documento?.toLowerCase())} ` +
-            `N.º ${cidadao.numero_bi || '....................'}, Emitido em ${formatDate(cidadao.data_emissao)}, é residente no(a) ${getAmbito(cidadao.ambito_territorial?.toLowerCase())}
+            `nascido aos ${cidadao?.data_nascimento?.split("-")?.[2]} de ${cidadao?.data_nascimento?.split("-")?.[1]} de ${cidadao?.data_nascimento?.split("-")?.[0]}, em ${cidadao.localidade || 'Luanda'}, titular do ${getTypeDoc(cidadao.tipo_documento?.toLowerCase())} ` +
+            `N.º ${cidadao.numero_bi || '....................'}, data de emissão ${formatDate(cidadao.data_emissao)}, é residente em ${cidadao.localidade}, ${getAmbito(cidadao.ambito_territorial?.toLowerCase())}
             `,
             { align: "justify", lineGap: 10 }
         );
-      
- 
+
+
         doc.moveDown(1);
 
-    
 
-      
+
+
 
         /*       drawCheckbox("Rua", ambito === 'rua', checkX, checkY);
               checkX += 80;
@@ -216,7 +217,7 @@ export async function POST(req: NextRequest) {
 
         // Signature Line
         doc.text("O PRESIDENTE DA COMISSÃO DE MORADORES", { align: "center", width: 500 });
-     doc.moveDown(2);
+        doc.moveDown(2);
         // Line for signature
         doc.moveTo(150, doc.y).lineTo(450, doc.y).stroke();
 

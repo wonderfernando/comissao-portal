@@ -60,6 +60,7 @@ interface RequestBody {
         data_obito?: string;
         rua?: string;
         casa_numero?: string;
+        emissor?: string;
     };
 }
 function getTypeDoc(type: string) {
@@ -77,13 +78,17 @@ export async function POST(req: NextRequest) {
     try {
         const body: RequestBody = await req.json();
         // Extract data - prioritizing standard locations but falling back if needed
-        const { cidadao, comissao, hash_qr } = body.dados;
-
+        const { cidadao, comissao, hash_qr, ...rest } = body.dados;
+        console.log("rest", rest);
+        console.log("comissao", comissao);
+        console.log("cidadao", cidadao);    
         // Sometimes extra fields might be in 'cidadao' or 'body.dados' depending on how it's saved
         // We'll trust the payload structure passed from the specific print call
-        const dataObito = body.dados.data_obito || cidadao.data_obito;
-        const nomeDeclarante = body.dados.nome_declarante || "N/A";
-
+        const dataObito = rest.data_obito || cidadao.data_obito;
+        const nomeDeclarante = cidadao.nome_declarante 
+        const emit = cidadao.emissor
+        const presidente = cidadao.presidente
+        console.log(comissao)  
         if (!cidadao || !comissao) {
             return new NextResponse(
                 JSON.stringify({ error: "Dados inválidos: Cidadão ou Comissão não encontrados" }),
@@ -119,7 +124,7 @@ export async function POST(req: NextRequest) {
         // Image paths
         const publicDir = path.join(process.cwd(), "public");
         const backImagePath = path.join(publicDir, "back.png");
-        const insigniaImagePath = path.join(publicDir, "insignia.png");
+      //  const insigniaImagePath = path.join(publicDir, "insignia.png");
 
         // Watermark
         if (fs.existsSync(backImagePath)) {
@@ -127,11 +132,11 @@ export async function POST(req: NextRequest) {
         }
 
         // Insignia/Brasão
-        if (fs.existsSync(insigniaImagePath)) {
+    /*     if (fs.existsSync(insigniaImagePath)) {
             doc.image(insigniaImagePath, 250, 40, { width: 100 }).moveDown(8);
         } else {
             doc.moveDown(8);
-        }
+        } */
 
         // Header - CM Number
         doc.fontSize(12).text(`CM n.º ${comissao.codigo}`, { align: "right" });
@@ -139,7 +144,7 @@ export async function POST(req: NextRequest) {
         doc.moveDown(2);
 
         // Title
-        doc.fontSize(14).font("Helvetica-Bold").text("MODELO DE INFORMAÇÃO DE OCORRÊNCIA DE ÓBITO", {
+        doc.fontSize(14).font("Helvetica-Bold").text("INFORMAÇÃO DE OCORRÊNCIA DE ÓBITO", {
             align: "center",
             underline: true
         });
@@ -165,16 +170,14 @@ export async function POST(req: NextRequest) {
 
         // Body Text
 
-        const rua = body.dados.rua || "................";
-        const casaNumero = body.dados.casa_numero || "......";
-
+ 
         // Paragraph 1
         doc.fontSize(12).text(
             `Para os devidos efeitos legais declara-se que aos ${formatFullDate(dataObito)} o cidadão ${cidadao.nome_completo || '...........................................'}, ` +
             `${cidadao.estado_civil || 'solteiro/casado'}, de nacionalidade ${cidadao.nacionalidade || '....................'}, ` +
             `filho de ${cidadao.nome_pai || '.......................................'} e de ${cidadao.nome_mae || '.......................................'}, ` +
-            `nascido aos ${formatDate(cidadao.data_nascimento)}, residente em ${comissao.bairro?.nome || '................'}, rua ${rua}, casa n.º ${casaNumero}, ` +
-            `titular do ${getTypeDoc(cidadao.tipo_documento?.toLowerCase()) || 'Bilhete de Identidade'} n.º ${cidadao.numero_bi || '....................'}, passado pela emissão.`,
+            `nascido aos ${cidadao?.data_nascimento?.split("-")?.[2]} de ${cidadao?.data_nascimento?.split("-")?.[1]} de ${cidadao?.data_nascimento?.split("-")?.[0]}, residente em ${cidadao.localidade || '................'}, rua ${cidadao.rua}, casa n.º ${cidadao.casa_numero || "S/N"}, ` +
+            `titular do ${getTypeDoc(cidadao.tipo_documento?.toLowerCase()) || 'Bilhete de Identidade'} n.º ${cidadao.numero_bi || '....................'}, passado pela ${emit}.`,
             { align: "justify", lineGap: 10 }
         );
 
@@ -189,7 +192,7 @@ export async function POST(req: NextRequest) {
         // Note: The model says "tendo tomado conhecimento da ocorrência (nome ....)". We typically put the Authority name here.
         // Assuming "O Presidente" is the one who took knowledge.
         doc.text(
-            `A informação foi prestada pelo ${nomeDeclarante}, tendo tomado conhecimento da ocorrência (nome O Presidente da Comissão), passei a presente Ocorrência de Óbito, por mim assinada.`,
+            `A informação foi prestada pelo ${nomeDeclarante}, tendo tomado conhecimento da ocorrência ${presidente}, passei a presente Ocorrência de Óbito, por mim assinada.`,
             { align: "justify", lineGap: 10 }
         );
 

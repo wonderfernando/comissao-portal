@@ -41,6 +41,7 @@ const formSchema = z.object({
     nome_completo: z.string().min(3, "Nome completo é obrigatório"),
     numero_bi: z.string().min(5, "Número do BI é obrigatório"),
     nacionalidade: z.string().min(2, "Nacionalidade é obrigatória"),
+    localidade: z.string().optional(),
     data_emissao: z.string().min(1, "Data de emissão é obrigatória"),
     tipo_documento: z.string().min(1, "Tipo de documento é obrigatório"),
     data_nascimento: z.string().min(1, "Data de nascimento é obrigatória"),
@@ -67,6 +68,7 @@ export function DeclaracaoMoradorMenorForm() {
             nome_completo: "",
             numero_bi: "",
             nacionalidade: "",
+            localidade: "",
             data_emissao: "",
             tipo_documento: "",
             data_nascimento: "",
@@ -76,10 +78,10 @@ export function DeclaracaoMoradorMenorForm() {
             ambito_territorial: "",
         },
     });
-    
+
     const { mutate: saveDocument, isPending: isSubmitting } = useMutation({
         mutationFn: saveDocumentAction,
-        onSuccess: async (result) => {
+        onSuccess: async (result, variables) => {
             if (!result.success || !result.dados) {
                 console.error(result);
                 toast.error(result?.mensagem || "Não foi possivel emitir documento");
@@ -87,12 +89,25 @@ export function DeclaracaoMoradorMenorForm() {
             }
             toast.success("Documento emitido com sucesso");
             try {
+                // Merge localidade from form data into result for printing, 
+                // in case backend doesn't return it yet.
+                const printPayload = {
+                    ...result,
+                    dados: {
+                        ...result.dados,
+                        cidadao: {
+                            ...result.dados.cidadao,
+                            localidade: variables.localidade
+                        }
+                    }
+                };
+
                 const response = await fetch('/api/print/declaracao-morador-menor', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(result),
+                    body: JSON.stringify(printPayload),
                 });
 
                 if (response.ok) {
@@ -217,6 +232,20 @@ export function DeclaracaoMoradorMenorForm() {
 
                                 <FormField
                                     control={form.control}
+                                    name="localidade"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Localidade</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Luanda" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
                                     name="data_nascimento"
                                     render={({ field }) => (
                                         <FormItem>
@@ -295,7 +324,7 @@ export function DeclaracaoMoradorMenorForm() {
                                     )}
                                 />
 
-                        
+
                                 <FormField
                                     control={form.control}
                                     name="ambito_territorial"

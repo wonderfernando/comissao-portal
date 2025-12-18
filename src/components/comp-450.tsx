@@ -37,8 +37,7 @@ export default function BreadcrumbComp() {
                 ) : (
                   <BreadcrumbLink href={href}>{title}</BreadcrumbLink>
                 )}
-                {!isLast && <BreadcrumbSeparator> / </BreadcrumbSeparator>}
-              </BreadcrumbItem>
+                      </BreadcrumbItem>
             )
           })
         }

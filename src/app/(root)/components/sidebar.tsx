@@ -45,9 +45,9 @@ export async function AppSidebar() {
     <Sidebar variant="floating" className="w-2xs text-muted-foreground">
       <SidebarHeader>
         <SidebarMenuButton size="lg" className="text-[16px] font-bold" asChild>
-          <a href="#" className="flex items-center gap-2">
+          <a href="#" className="grid items-center gap-2">
             <img src="/logo2.png" width={80} height={80} alt="Logo" className="rounded-md inline-block mr-2" />
-            <span></span>
+            <span className="text-xs">Portal de Participação Cidadão.</span>
           </a>
         </SidebarMenuButton>
       </SidebarHeader>

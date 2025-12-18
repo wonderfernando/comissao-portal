@@ -177,7 +177,7 @@ export interface Comissao {
   status: string;
   bairro_id: number;
   comissao_estado_id: number;
-
+  ambito_territorial: string;
   criado_por: Usuario | null;
 
   created_at: string;

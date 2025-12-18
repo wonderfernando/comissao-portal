@@ -13,14 +13,15 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { AlertTriangle, Download, Loader2 } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { useState, useTransition } from "react"
+import { useState } from "react"
 import AlertComponent from "../../components/alert-sure"
 import { Comissao } from "../interface"
 import { retStatusComissao } from "../utils"
 import { UseMutationOptions, useQuery } from "@tanstack/react-query"
 import { toast } from "sonner"
-import { getPdf, updateStateComissaoMoradores } from "../actions"
+import { updateStateComissaoMoradores } from "../actions"
 import { getCurrentUser } from "../../auth"
+import { CertificadoComissaoForm } from "./certificado-form"
 
 
 
@@ -61,16 +62,8 @@ export function ComissaoProfileView({ comissao }: { comissao: Comissao | null })
     setStatus(status);
     setOpenStatus(true);
   }
-  const [isPending, startTransition] = useTransition()
-  async function onClickEmitir() {
-    startTransition(() => {
-      window.open(`/api/certificado/${comissao?.id}`, "_blank")
-    })
-  }
 
-  async function renderPdf() {
-    window.open(`/api/certificado/${comissao?.id}`, "_blank")
-  }
+
   return (
     <Card className="w-full">
       <CardHeader className="flex items-center justify-between gap-4">
@@ -161,13 +154,7 @@ export function ComissaoProfileView({ comissao }: { comissao: Comissao | null })
           </DropdownMenuContent>
         </DropdownMenu>
         {(user?.tipo === "admin_municipal" || user?.tipo === "admin_central") && <div className="flex mt-4">
-          <Button
-            variant={"link"}
-            onClick={onClickEmitir}
-            className="cursor-pointer">
-            Emitir Certificado
-            {isPending && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-          </Button>
+          <CertificadoComissaoForm comissao={comissao} />
         </div>}
       </CardContent>
 

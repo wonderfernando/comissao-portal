@@ -14,8 +14,7 @@ export async function middleware(req: NextRequest) {
         return NextResponse.next();
     }
 
-    const isPublicPath = pathname.startsWith('/auth');
-
+    const isPublicPath = pathname.startsWith('/auth')
     const isAuthenticate = await isAuthenticated()
 
     if (!isAuthenticate && !isPublicPath) {

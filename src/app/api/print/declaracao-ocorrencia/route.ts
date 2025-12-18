@@ -114,19 +114,19 @@ export async function POST(req: NextRequest) {
         }
 
         // Insignia/Brasão
-        if (fs.existsSync(insigniaImagePath)) {
+    /*     if (fs.existsSync(insigniaImagePath)) {
             doc.image(insigniaImagePath, 250, 40, { width: 100 }).moveDown(8);
         } else {
             doc.moveDown(8);
         }
-
+ */
         // Header - CM Number
         doc.fontSize(12).text(`CM n.º ${comissao.codigo}`, { align: "right" });
 
         doc.moveDown(2);
 
         // Title
-        doc.fontSize(14).font("Helvetica-Bold").text("MODELO DE DECLARAÇÃO DE OCORRÊNCIA", {
+        doc.fontSize(14).font("Helvetica-Bold").text("DECLARAÇÃO DE OCORRÊNCIA", {
             align: "center",
             underline: true
         });
@@ -137,15 +137,15 @@ export async function POST(req: NextRequest) {
         // Body Text
         // "Para os devidos efeitos, (Denuncio, Participo) que,"
         doc.fontSize(12).text(
-            `Para os devidos efeitos, ${tipoDeclaracao} que,`,
-            { align: "left", lineGap: 10 }
+            `Para os devidos efeitos, ${tipoDeclaracao} que, ${descricao}`,
+            { align: "left" }
         );
 
-        doc.moveDown(1);
+        //doc.moveDown(1);
 
         // Description lines
         const descriptionLines = doc.heightOfString(descricao, { width: 450 });
-        if (descricao) {
+    /*     if (descricao) {
             doc.text(descricao, { align: "justify", lineGap: 5 });
         } else {
             // Draw dotted lines if empty (for manual filling, though usually digital)
@@ -153,7 +153,7 @@ export async function POST(req: NextRequest) {
                 doc.text(".........................................................................................................................................................");
                 doc.moveDown(0.5);
             }
-        }
+        } */
 
         doc.moveDown(3);
 
@@ -171,7 +171,7 @@ export async function POST(req: NextRequest) {
             { align: "justify", lineGap: 10 }
         );
 
-        doc.moveDown(4);
+        doc.moveDown(6);
 
         // Signature Line
         doc.text("O PRESIDENTE DA COMISSÃO DE MORADORES", { align: "center", width: 500 });

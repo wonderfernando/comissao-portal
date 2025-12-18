@@ -41,6 +41,7 @@ const formSchema = z.object({
     nome_completo: z.string().min(3, "Nome completo é obrigatório"),
     numero_bi: z.string().min(5, "Número do BI é obrigatório"),
     nacionalidade: z.string().min(2, "Nacionalidade é obrigatória"),
+    localidade: z.string().optional(),
     data_emissao: z.string().min(1, "Data de emissão é obrigatória"),
     tipo_documento: z.string().min(1, "Tipo de documento é obrigatório"),
     data_nascimento: z.string().min(1, "Data de nascimento é obrigatória"),
@@ -53,7 +54,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
- 
+
 
 export function DeclaracaoMoradorForm() {
     const [open, setOpen] = useState(false);
@@ -66,6 +67,7 @@ export function DeclaracaoMoradorForm() {
             nome_completo: "",
             numero_bi: "",
             nacionalidade: "",
+            localidade: "",
             data_emissao: "",
             tipo_documento: "",
             data_nascimento: "",
@@ -82,7 +84,7 @@ export function DeclaracaoMoradorForm() {
     }
     const { mutate: saveDocument, isPending: isSubmitting } = useMutation({
         mutationFn: saveDocumentAction,
-        onSuccess: async (result) => {
+        onSuccess: async (result, variables) => {
             if (!result.success || !result.dados) {
                 console.error(result);
                 toast.error(result?.mensagem || "Não foi possivel emitir documento");
@@ -92,12 +94,23 @@ export function DeclaracaoMoradorForm() {
             toast.success("Documento emitido com sucesso");
 
             try {
+                const printPayload = {
+                    ...result,
+                    dados: {
+                        ...result.dados,
+                        cidadao: {
+                            ...result.dados.cidadao,
+                            localidade: variables.localidade
+                        }
+                    }
+                };
+
                 const response = await fetch('/api/print/declaracao-morador', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(result),
+                    body: JSON.stringify(printPayload),
                 });
 
                 if (response.ok) {
@@ -222,6 +235,20 @@ export function DeclaracaoMoradorForm() {
 
                                 <FormField
                                     control={form.control}
+                                    name="localidade"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Localidade</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Luanda" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
                                     name="data_nascimento"
                                     render={({ field }) => (
                                         <FormItem>
@@ -313,10 +340,10 @@ export function DeclaracaoMoradorForm() {
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
-                                                    <SelectItem value="Solteiro">Solteiro(a)</SelectItem>
-                                                    <SelectItem value="Casado">Casado(a)</SelectItem>
-                                                    <SelectItem value="Divorciado">Divorciado(a)</SelectItem>
-                                                    <SelectItem value="Viuvo">Viúvo(a)</SelectItem>
+                                                    <SelectItem value="solteiro">Solteiro(a)</SelectItem>
+                                                    <SelectItem value="casado">Casado(a)</SelectItem>
+                                                    <SelectItem value="divorciado">Divorciado(a)</SelectItem>
+                                                    <SelectItem value="viuvo">Viúvo(a)</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                             <FormMessage />
